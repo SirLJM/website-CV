@@ -2,6 +2,17 @@ const Persistence = {
     COOKIE_NAME: 'cv_clicker_save',
     COOKIE_DAYS: 365,
 
+    localStorageAvailable: (() => {
+        try {
+            const test = '__test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+        } catch {
+            return false;
+        }
+    })(),
+
     defaultState: {
         totalClicks: 0,
         clickPower: 1,
@@ -20,6 +31,7 @@ const Persistence = {
             momentum: 0
         },
         purchasedThemes: [],
+        achievements: [],
         lastSave: Date.now()
     },
 
@@ -28,9 +40,17 @@ const Persistence = {
         const expires = new Date(Date.now() + this.COOKIE_DAYS * 24 * 60 * 60 * 1000).toUTCString();
         document.cookie = `${this.COOKIE_NAME}=${encodeURIComponent(data)}; expires=${expires}; path=/; SameSite=Lax`;
 
-        try {
+        if (this.localStorageAvailable) {
             localStorage.setItem(this.COOKIE_NAME, data);
-        } catch (e) {}
+        }
+    },
+
+    parseJSON(str) {
+        try {
+            return JSON.parse(str);
+        } catch {
+            return null;
+        }
     },
 
     load() {
@@ -40,27 +60,19 @@ const Persistence = {
         for (const cookie of cookies) {
             const [name, value] = cookie.trim().split('=');
             if (name === this.COOKIE_NAME && value) {
-                try {
-                    data = JSON.parse(decodeURIComponent(value));
-                    break;
-                } catch (e) {}
+                data = this.parseJSON(decodeURIComponent(value));
+                if (data) break;
             }
         }
 
-        if (!data) {
-            try {
-                const stored = localStorage.getItem(this.COOKIE_NAME);
-                if (stored) {
-                    data = JSON.parse(stored);
-                }
-            } catch (e) {}
+        if (!data && this.localStorageAvailable) {
+            const stored = localStorage.getItem(this.COOKIE_NAME);
+            if (stored) {
+                data = this.parseJSON(stored);
+            }
         }
 
-        if (data) {
-            return this.migrate(data);
-        }
-
-        return { ...this.defaultState };
+        return data ? this.migrate(data) : { ...this.defaultState };
     },
 
     migrate(data) {
@@ -81,8 +93,8 @@ const Persistence = {
 
     clear() {
         document.cookie = `${this.COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-        try {
+        if (this.localStorageAvailable) {
             localStorage.removeItem(this.COOKIE_NAME);
-        } catch (e) {}
+        }
     }
 };

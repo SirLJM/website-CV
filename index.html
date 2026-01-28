@@ -32,6 +32,7 @@
                 </div>
             </div>
             <div class="hud-right">
+                <button id="achievements-btn" class="icon-btn" title="Achievements">🏅</button>
                 <button id="lang-toggle" class="icon-btn hidden" title="Toggle Language">EN</button>
                 <button id="sound-toggle" class="icon-btn" title="Toggle Sound">
                     <span class="sound-on">🔊</span>
@@ -96,12 +97,23 @@
         </aside>
 
         <div id="achievement-toast" class="hidden"></div>
+
+        <div id="achievements-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🏅 Achievements</h2>
+                    <button id="achievements-close" class="modal-close">&times;</button>
+                </div>
+                <div id="achievements-list"></div>
+            </div>
+        </div>
     </div>
 
     <script src="js/persistence.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/store.js"></script>
     <script src="js/cv-renderer.js"></script>
+    <script src="js/achievements.js"></script>
     <script src="js/game.js"></script>
     <script src="js/main.js"></script>
 </body>

@@ -22,7 +22,11 @@ class Game {
             langToggle: document.getElementById('lang-toggle'),
             soundToggle: document.getElementById('sound-toggle'),
             achievementToast: document.getElementById('achievement-toast'),
-            resetBtn: document.getElementById('reset-btn')
+            resetBtn: document.getElementById('reset-btn'),
+            achievementsBtn: document.getElementById('achievements-btn'),
+            achievementsModal: document.getElementById('achievements-modal'),
+            achievementsClose: document.getElementById('achievements-close'),
+            achievementsList: document.getElementById('achievements-list')
         };
 
         this.bindEvents();
@@ -47,6 +51,12 @@ class Game {
         this.elements.resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.resetProgress();
+        });
+
+        this.elements.achievementsBtn.addEventListener('click', () => this.openAchievements());
+        this.elements.achievementsClose.addEventListener('click', () => this.closeAchievements());
+        this.elements.achievementsModal.addEventListener('click', (e) => {
+            if (e.target === this.elements.achievementsModal) this.closeAchievements();
         });
 
         document.addEventListener('visibilitychange', () => {
@@ -99,6 +109,7 @@ class Game {
 
         this.checkUnlocks(oldClicks, this.state.totalClicks);
         this.checkStoreUnlock();
+        this.checkAchievements();
         this.updateDisplay();
     }
 
@@ -155,7 +166,12 @@ class Game {
 
     checkStoreUnlock() {
         if (this.state.totalClicks >= Store.UNLOCK_THRESHOLD) {
+            const wasHidden = this.elements.storeMenu.classList.contains('hidden');
             this.elements.storeMenu.classList.remove('hidden');
+            if (wasHidden) {
+                this.showAchievement('🛍️ Store Unlocked!');
+                Audio.playUnlock();
+            }
         }
     }
 
@@ -194,6 +210,7 @@ class Game {
 
         Audio.playPurchase();
         this.createPurchaseParticles();
+        this.checkAchievements();
         this.updateDisplay();
         this.save();
 
@@ -252,11 +269,39 @@ class Game {
         soundOff.classList.toggle('hidden', this.state.soundEnabled);
     }
 
+    openAchievements() {
+        Achievements.render(this.elements.achievementsList, this.state);
+        this.elements.achievementsModal.classList.remove('hidden');
+    }
+
+    closeAchievements() {
+        this.elements.achievementsModal.classList.add('hidden');
+    }
+
+    checkAchievements() {
+        const newAchievements = Achievements.checkNew(this.state);
+        for (const achievement of newAchievements) {
+            this.state.achievements.push(achievement.id);
+            this.showAchievement(`${achievement.icon} ${achievement.name}`);
+            Audio.playUnlock();
+        }
+        if (newAchievements.length > 0) {
+            this.save();
+        }
+    }
+
     resetProgress() {
         if (!confirm('Reset all progress? This cannot be undone.')) return;
 
+        const hadProgress = this.state.totalClicks > 0;
+
         Persistence.clear();
         this.state = { ...Persistence.defaultState };
+
+        if (hadProgress) {
+            this.state.achievements = ['reset'];
+            this.showAchievement('🔄 Fresh Start');
+        }
 
         Store.applyTheme(null);
 
@@ -273,6 +318,7 @@ class Game {
 
         this.updateSoundIcons();
         this.updateDisplay();
+        this.save();
     }
 
     updateDisplay() {
