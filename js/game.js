@@ -241,19 +241,15 @@ class Game {
     toggleSound() {
         this.state.soundEnabled = !this.state.soundEnabled;
         Audio.setEnabled(this.state.soundEnabled);
+        this.updateSoundIcons();
+        this.save();
+    }
 
+    updateSoundIcons() {
         const soundOn = this.elements.soundToggle.querySelector('.sound-on');
         const soundOff = this.elements.soundToggle.querySelector('.sound-off');
-
-        if (this.state.soundEnabled) {
-            soundOn.classList.remove('hidden');
-            soundOff.classList.add('hidden');
-        } else {
-            soundOn.classList.add('hidden');
-            soundOff.classList.remove('hidden');
-        }
-
-        this.save();
+        soundOn.classList.toggle('hidden', !this.state.soundEnabled);
+        soundOff.classList.toggle('hidden', this.state.soundEnabled);
     }
 
     resetProgress() {
@@ -275,9 +271,7 @@ class Game {
         this.elements.langToggle.classList.add('hidden');
         this.elements.cvPanel.classList.add('collapsed');
 
-        this.elements.soundToggle.querySelector('.sound-on').classList.remove('hidden');
-        this.elements.soundToggle.querySelector('.sound-off').classList.add('hidden');
-
+        this.updateSoundIcons();
         this.updateDisplay();
     }
 
@@ -350,11 +344,7 @@ class Game {
 
         Audio.init();
         Audio.setEnabled(this.state.soundEnabled);
-
-        if (!this.state.soundEnabled) {
-            this.elements.soundToggle.querySelector('.sound-on').classList.add('hidden');
-            this.elements.soundToggle.querySelector('.sound-off').classList.remove('hidden');
-        }
+        this.updateSoundIcons();
 
         this.elements.langToggle.textContent = this.state.language.toUpperCase();
 
