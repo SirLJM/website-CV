@@ -1,6 +1,8 @@
 const CVRenderer = {
     data: null,
     currentLang: 'en',
+    currentCvType: 'it',
+    githubBaseUrl: 'https://raw.githubusercontent.com/SirLJM/CV/main/static',
 
     unlockThresholds: [
         { clicks: 10, section: 'header', name: 'Header' },
@@ -11,14 +13,34 @@ const CVRenderer = {
         { clicks: 1500, section: 'contact', name: 'Contact' }
     ],
 
-    async loadData() {
-        try {
-            const response = await fetch('data/content_it.yaml');
+    cvTypes: {
+        it: { name: 'IT Developer', file: 'content_it.yaml' },
+        pm: { name: 'Project Manager', file: 'content_pm.yaml' },
+        ba: { name: 'Business Analyst', file: 'content_ba.yaml' }
+    },
+
+    async loadData(cvType = null) {
+        if (cvType) {
+            this.currentCvType = cvType;
+        }
+        const file = this.cvTypes[this.currentCvType].file;
+        const url = `${this.githubBaseUrl}/${file}`;
+
+        const response = await fetch(url).catch(() => null);
+        if (response?.ok) {
             const text = await response.text();
             this.data = jsyaml.load(text);
             return true;
-        } catch (e) {
-            console.error('Failed to load CV data:', e);
+        }
+
+        console.error('Failed to load CV data from GitHub, trying fallback');
+        try {
+            const fallback = await fetch(`data/content_${this.currentCvType}.yaml`);
+            const text = await fallback.text();
+            this.data = jsyaml.load(text);
+            return true;
+        } catch (error_) {
+            console.error('Fallback also failed:', error_);
             return false;
         }
     },

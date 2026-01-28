@@ -5,6 +5,50 @@ class Game {
         this.comboCount = 0;
         this.autoClickAccumulator = 0;
 
+        this.quizData = {
+            questions: [
+                {
+                    text: {
+                        en: 'What challenge does your team face most?',
+                        pl: 'Z jakim wyzwaniem Twój zespół mierzy się najczęściej?'
+                    },
+                    options: [
+                        { text: { en: 'Technical debt and system reliability', pl: 'Dług techniczny i niezawodność systemów' }, profile: 'it' },
+                        { text: { en: 'Missed deadlines and resource coordination', pl: 'Przekraczane terminy i koordynacja zasobów' }, profile: 'pm' },
+                        { text: { en: 'Unclear requirements and stakeholder misalignment', pl: 'Niejasne wymagania i rozbieżności interesariuszy' }, profile: 'ba' }
+                    ]
+                },
+                {
+                    text: {
+                        en: 'What would the ideal candidate focus on first?',
+                        pl: 'Na czym idealny kandydat skupiłby się najpierw?'
+                    },
+                    options: [
+                        { text: { en: 'Reviewing the codebase and architecture', pl: 'Przegląd kodu i architektury' }, profile: 'it' },
+                        { text: { en: 'Understanding ongoing initiatives and blockers', pl: 'Zrozumienie bieżących inicjatyw i blokerów' }, profile: 'pm' },
+                        { text: { en: 'Mapping current processes and pain points', pl: 'Mapowanie procesów i problemów' }, profile: 'ba' }
+                    ]
+                },
+                {
+                    text: {
+                        en: 'What does your team need most right now?',
+                        pl: 'Czego Twój zespół najbardziej potrzebuje teraz?'
+                    },
+                    options: [
+                        { text: { en: 'Someone who can architect and build solutions', pl: 'Kogoś, kto zaprojektuje i zbuduje rozwiązania' }, profile: 'it' },
+                        { text: { en: 'Someone who can drive delivery and keep things on track', pl: 'Kogoś, kto poprowadzi dostawy i utrzyma tempo' }, profile: 'pm' },
+                        { text: { en: 'Someone who bridges business needs and technical teams', pl: 'Kogoś, kto połączy potrzeby biznesu z zespołami technicznymi' }, profile: 'ba' }
+                    ]
+                }
+            ],
+            profiles: {
+                it: { name: { en: 'IT Developer', pl: 'Programista IT' } },
+                pm: { name: { en: 'Project Manager', pl: 'Kierownik Projektu' } },
+                ba: { name: { en: 'Business Analyst', pl: 'Analityk Biznesowy' } }
+            }
+        };
+        this.quizState = { currentQuestion: 0, scores: { it: 0, pm: 0, ba: 0 } };
+
         this.elements = {
             totalClicks: document.getElementById('total-clicks'),
             cps: document.getElementById('clicks-per-second'),
@@ -26,7 +70,11 @@ class Game {
             achievementsBtn: document.getElementById('achievements-btn'),
             achievementsModal: document.getElementById('achievements-modal'),
             achievementsClose: document.getElementById('achievements-close'),
-            achievementsList: document.getElementById('achievements-list')
+            achievementsList: document.getElementById('achievements-list'),
+            quizModal: document.getElementById('cv-quiz-modal'),
+            quizClose: document.getElementById('quiz-close'),
+            quizContent: document.getElementById('quiz-content'),
+            quizResult: document.getElementById('quiz-result')
         };
 
         this.bindEvents();
@@ -57,6 +105,11 @@ class Game {
         this.elements.achievementsClose.addEventListener('click', () => this.closeAchievements());
         this.elements.achievementsModal.addEventListener('click', (e) => {
             if (e.target === this.elements.achievementsModal) this.closeAchievements();
+        });
+
+        this.elements.quizClose.addEventListener('click', () => this.closeQuiz());
+        this.elements.quizModal.addEventListener('click', (e) => {
+            if (e.target === this.elements.quizModal) this.closeQuiz();
         });
 
         document.addEventListener('visibilitychange', () => {
@@ -156,6 +209,10 @@ class Game {
 
             if (unlock.section === 'header') {
                 this.elements.langToggle.classList.remove('hidden');
+            }
+
+            if (unlock.section === 'contact' && !this.state.quizCompleted) {
+                setTimeout(() => this.showCvQuiz(), 1500);
             }
 
             if (this.elements.cvPanel.classList.contains('collapsed')) {
@@ -276,6 +333,100 @@ class Game {
 
     closeAchievements() {
         this.elements.achievementsModal.classList.add('hidden');
+    }
+
+    showCvQuiz() {
+        this.quizState = { currentQuestion: 0, scores: { it: 0, pm: 0, ba: 0 } };
+        this.elements.quizResult.classList.add('hidden');
+        this.elements.quizContent.classList.remove('hidden');
+        this.renderQuizQuestion();
+        this.elements.quizModal.classList.remove('hidden');
+    }
+
+    renderQuizQuestion() {
+        const q = this.quizData.questions[this.quizState.currentQuestion];
+        const lang = this.state.language;
+        const total = this.quizData.questions.length;
+        const current = this.quizState.currentQuestion + 1;
+
+        let html = `
+            <div class="quiz-progress">${current} / ${total}</div>
+            <div class="quiz-question">${q.text[lang]}</div>
+            <div class="quiz-options">
+        `;
+
+        const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+        for (const opt of shuffled) {
+            html += `<button class="quiz-option" data-profile="${opt.profile}">${opt.text[lang]}</button>`;
+        }
+
+        html += '</div>';
+        this.elements.quizContent.innerHTML = html;
+
+        this.elements.quizContent.querySelectorAll('.quiz-option').forEach(btn => {
+            btn.addEventListener('click', () => this.handleQuizAnswer(btn.dataset.profile));
+        });
+    }
+
+    handleQuizAnswer(profile) {
+        this.quizState.scores[profile]++;
+
+        if (this.quizState.currentQuestion < this.quizData.questions.length - 1) {
+            this.quizState.currentQuestion++;
+            this.renderQuizQuestion();
+        } else {
+            this.showQuizResult();
+        }
+    }
+
+    showQuizResult() {
+        const scores = this.quizState.scores;
+        const lang = this.state.language;
+
+        let result = 'it';
+        if (scores.pm > scores[result]) result = 'pm';
+        if (scores.ba > scores[result]) result = 'ba';
+
+        this.state.cvType = result;
+        this.state.quizCompleted = true;
+        this.save();
+
+        const profileName = this.quizData.profiles[result].name[lang];
+        const downloadUrl = `https://github.com/SirLJM/CV/releases/latest/download/Lukasz.Wisniewski.CV.${result.toUpperCase()}.${lang}.pdf`;
+
+        const labels = {
+            en: {
+                match: 'Your best match:',
+                desc: 'Based on your answers, the CV version that best fits your needs is:',
+                download: 'Download CV'
+            },
+            pl: {
+                match: 'Najlepsze dopasowanie:',
+                desc: 'Na podstawie Twoich odpowiedzi, wersja CV najlepiej pasująca do Twoich potrzeb:',
+                download: 'Pobierz CV'
+            }
+        };
+
+        this.elements.quizContent.classList.add('hidden');
+        this.elements.quizResult.classList.remove('hidden');
+        this.elements.quizResult.innerHTML = `
+            <div class="quiz-result-content">
+                <div class="result-label">${labels[lang].match}</div>
+                <div class="result-profile">${profileName}</div>
+                <p class="result-desc">${labels[lang].desc}</p>
+                <a href="${downloadUrl}" class="download-btn" target="_blank" rel="noopener">${labels[lang].download}</a>
+            </div>
+        `;
+
+        Audio.playUnlock();
+    }
+
+    closeQuiz() {
+        this.elements.quizModal.classList.add('hidden');
+    }
+
+    openQuizFromButton() {
+        this.showCvQuiz();
     }
 
     checkAchievements() {

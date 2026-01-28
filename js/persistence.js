@@ -22,6 +22,8 @@ const Persistence = {
         unlockedSections: [],
         ownedTheme: null,
         language: 'en',
+        cvType: 'it',
+        quizCompleted: false,
         soundEnabled: true,
         upgrades: {
             autoclicker: 0,
