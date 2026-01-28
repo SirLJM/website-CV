@@ -18,7 +18,7 @@
 }
 
 body {
-    font-family: var(--font-main);
+    font-family: var(--font-main), serif;
     background: var(--color-bg);
     color: var(--color-text);
     min-height: 100vh;
@@ -110,7 +110,7 @@ body {
 
 #progress-fill {
     height: 100%;
-    width: 0%;
+    width: 0;
     background: linear-gradient(90deg, var(--color-progress), var(--color-success));
     transition: width 0.3s ease;
 }
@@ -197,14 +197,22 @@ body {
     position: absolute;
     top: 100%;
     right: 0;
-    margin-top: 0.5rem;
     background: var(--color-panel);
     border: 2px solid var(--color-progress);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.5rem 1rem 1rem;
     min-width: 280px;
     display: none;
     z-index: 200;
+}
+
+#store-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: -20px;
+    right: -20px;
+    height: 40px;
 }
 
 #store-menu:hover #store-dropdown,

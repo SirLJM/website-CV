@@ -15,23 +15,23 @@ Then visit http://localhost:8080
 ## Features
 
 - **Click mechanics** - Earn points with visual feedback (floating numbers, ripples, particles)
-- **Progressive unlocks** - CV sections reveal at click thresholds (10, 50, 150, 400, 800, 1500)
+- **Progressively unlocks** - CV sections reveal at click thresholds (10, 50, 150, 400, 800, 1500)
 - **Store system** - Purchase upgrades (Auto-Clicker, Click Power, Double Clicks, Lucky Clicks, Momentum)
 - **Themes** - Three purchasable visual themes (Neon Glow, Retro 8-bit, Minimal Pro)
 - **Bilingual** - English/Polish language toggle
-- **Sound effects** - Web Audio API synthesized sounds with mute option
+- **Sound effects** - Web Audio API synthesized sounds with a mute option
 - **Persistence** - Progress saved to cookies/localStorage
 
 ## CV Sections
 
-| Clicks | Unlock |
-|--------|--------|
-| 10 | Header (name, photo, intro) |
-| 50 | Skills |
-| 150 | Work Experience |
-| 400 | Projects |
-| 800 | Education & Certifications |
-| 1500 | Contact & Languages |
+| Clicks | Unlock                      |
+|--------|-----------------------------|
+| 10     | Header (name, photo, intro) |
+| 50     | Skills                      |
+| 150    | Work Experience             |
+| 400    | Projects                    |
+| 800    | Education & Certifications  |
+| 1500   | Contact & Languages         |
 
 ## Tech Stack
 

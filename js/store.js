@@ -4,7 +4,7 @@ const Store = {
     upgrades: {
         autoclicker: {
             name: 'Auto-Clicker',
-            effect: '+0.1 clicks/sec',
+            effect: '+1 click/sec',
             baseCost: 50,
             costMultiplier: 1.15
         },
@@ -12,7 +12,7 @@ const Store = {
             name: 'Click Power',
             effect: '+1 per click',
             baseCost: 25,
-            costMultiplier: 1.20
+            costMultiplier: 1.2
         },
         doubleclicks: {
             name: 'Double Clicks',
@@ -30,11 +30,17 @@ const Store = {
             name: 'Momentum',
             effect: 'Combo bonus for fast clicks',
             baseCost: 150,
-            costMultiplier: 1.20
+            costMultiplier: 1.2
         }
     },
 
     themes: {
+        base: {
+            name: 'Base',
+            description: 'Default theme',
+            cost: 0,
+            file: null
+        },
         neon: {
             name: 'Neon Glow',
             description: 'Cyberpunk aesthetic',
@@ -95,6 +101,17 @@ const Store = {
         }
     },
 
+    getThemeActionHtml(active, owned, cost) {
+        if (active) return '<div class="store-item-cost" style="background: var(--color-success);">Active</div>';
+        if (owned) return '<div class="store-item-cost" style="cursor: pointer;">Apply</div>';
+        return `<div class="store-item-cost">${cost}</div>`;
+    },
+
+    getThemeClass(owned, affordable) {
+        if (owned) return 'owned';
+        return affordable ? 'affordable' : 'unaffordable';
+    },
+
     renderThemes(container, state, onPurchase, onApply) {
         container.innerHTML = '';
 
@@ -104,35 +121,20 @@ const Store = {
             const affordable = !owned && this.canAfford(theme.cost, state.totalClicks);
 
             const item = document.createElement('div');
-            item.className = `store-item ${owned ? 'owned' : (affordable ? 'affordable' : 'unaffordable')}`;
-
-            let actionHtml;
-            if (active) {
-                actionHtml = '<div class="store-item-cost" style="background: var(--color-success);">Active</div>';
-            } else if (owned) {
-                actionHtml = '<div class="store-item-cost" style="cursor: pointer;">Apply</div>';
-            } else {
-                actionHtml = `<div class="store-item-cost">${theme.cost}</div>`;
-            }
+            item.className = `store-item ${this.getThemeClass(owned, affordable)}`;
 
             item.innerHTML = `
                 <div class="store-item-info">
                     <div class="store-item-name">${theme.name}</div>
                     <div class="store-item-effect">${theme.description}</div>
                 </div>
-                ${actionHtml}
+                ${this.getThemeActionHtml(active, owned, theme.cost)}
             `;
 
             if (owned && !active) {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    onApply(id);
-                });
+                item.addEventListener('click', (e) => { e.stopPropagation(); onApply(id); });
             } else if (!owned && affordable) {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    onPurchase('theme', id, theme.cost);
-                });
+                item.addEventListener('click', (e) => { e.stopPropagation(); onPurchase('theme', id, theme.cost); });
             }
 
             container.appendChild(item);
@@ -158,20 +160,18 @@ const Store = {
     },
 
     getAutoClickRate(state) {
-        return (state.upgrades.autoclicker || 0) * 0.1;
+        return (state.upgrades.autoclicker || 0) * 1;
     },
 
     applyTheme(themeId) {
-        const existing = document.getElementById('theme-stylesheet');
-        if (existing) {
-            existing.remove();
-        }
+        document.getElementById('theme-stylesheet')?.remove();
 
-        if (themeId && this.themes[themeId]) {
+        const theme = this.themes[themeId];
+        if (theme?.file) {
             const link = document.createElement('link');
             link.id = 'theme-stylesheet';
             link.rel = 'stylesheet';
-            link.href = this.themes[themeId].file;
+            link.href = theme.file;
             document.head.appendChild(link);
         }
     }

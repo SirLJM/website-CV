@@ -44,4 +44,5 @@ CV Clicker is a gamified personal CV/resume website. Users click to earn points 
 
 
 ### Coding standards
-- Do not author commits as anthropic/claude
+- Do not: Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+- Do not use emojis outside of index.hmtl
