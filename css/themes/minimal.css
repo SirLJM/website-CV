@@ -1,0 +1,132 @@
+:root {
+    --color-action: #2563eb;
+    --color-progress: #0891b2;
+    --color-success: #059669;
+    --color-bg: #f8fafc;
+    --color-bg-light: #ffffff;
+    --color-accent: #1e293b;
+    --color-text: #1e293b;
+    --color-text-dim: #64748b;
+    --color-panel: #ffffff;
+}
+
+body {
+    background: var(--color-bg);
+}
+
+#hud {
+    background: var(--color-bg-light);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.click-circle {
+    background: var(--color-action);
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+    }
+    50% {
+        box-shadow: 0 10px 60px rgba(37, 99, 235, 0.4);
+    }
+}
+
+#cv-panel {
+    background: var(--color-panel);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+#cv-toggle {
+    background: var(--color-panel);
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+}
+
+#store-dropdown {
+    background: var(--color-panel);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.store-item {
+    background: var(--color-bg);
+    border: 1px solid #e2e8f0;
+}
+
+.store-item.affordable {
+    border-color: var(--color-progress);
+    box-shadow: none;
+}
+
+@keyframes item-glow {
+    0%, 100% {
+        border-color: var(--color-progress);
+    }
+    50% {
+        border-color: var(--color-action);
+    }
+}
+
+.skill-item, .experience-item, .project-item, .education-item, .contact-item, .hint, .lang-item, .cert-item {
+    background: var(--color-bg);
+    border: 1px solid #e2e8f0;
+}
+
+#progress-bar {
+    background: #e2e8f0;
+}
+
+#progress-fill {
+    background: linear-gradient(90deg, var(--color-progress), var(--color-action));
+}
+
+#progress-fill::after {
+    display: none;
+}
+
+.floating-number {
+    color: var(--color-action);
+    text-shadow: none;
+    font-weight: 600;
+}
+
+.icon-btn {
+    border-color: #e2e8f0;
+    color: var(--color-text);
+}
+
+.icon-btn:hover {
+    border-color: var(--color-action);
+    color: var(--color-action);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+#total-clicks {
+    color: var(--color-action);
+}
+
+#clicks-per-second {
+    color: var(--color-progress);
+}
+
+.cv-section h2 {
+    color: var(--color-accent);
+}
+
+.cv-section h3 {
+    color: var(--color-text);
+}
+
+#achievement-toast {
+    background: var(--color-action);
+    color: white;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+}
+
+.ripple {
+    background: rgba(37, 99, 235, 0.2);
+}

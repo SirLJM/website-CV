@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Clicker - Lukasz Wisniewski</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/game.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <header id="hud">
+            <div class="hud-left">
+                <div id="click-counter">
+                    <span id="total-clicks">0</span>
+                    <span class="label">clicks</span>
+                </div>
+                <div id="cps-display">
+                    <span id="clicks-per-second">0</span>
+                    <span class="label">per second</span>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div id="next-unlock">
+                    <span class="label">Next unlock:</span>
+                    <span id="next-unlock-name">Header</span>
+                    <span id="next-unlock-at">10 clicks</span>
+                </div>
+                <div id="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="hud-right">
+                <button id="lang-toggle" class="icon-btn hidden" title="Toggle Language">EN</button>
+                <button id="sound-toggle" class="icon-btn" title="Toggle Sound">
+                    <span class="sound-on">🔊</span>
+                    <span class="sound-off hidden">🔇</span>
+                </button>
+                <div id="store-menu" class="hidden">
+                    <button id="store-btn" class="icon-btn" title="Store">
+                        <span class="hamburger"></span>
+                    </button>
+                    <div id="store-dropdown">
+                        <h3>Store</h3>
+                        <div id="upgrades-section">
+                            <h4>Upgrades</h4>
+                            <div id="upgrades-list"></div>
+                        </div>
+                        <div id="themes-section">
+                            <h4>Themes</h4>
+                            <div id="themes-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main id="click-area">
+            <div id="click-target">
+                <div class="click-circle">
+                    <span class="click-text">CLICK</span>
+                </div>
+            </div>
+            <div id="floating-numbers"></div>
+        </main>
+
+        <aside id="cv-panel" class="collapsed">
+            <button id="cv-toggle" title="Toggle CV Panel">
+                <span class="arrow">▲</span>
+            </button>
+            <div id="cv-content">
+                <section id="cv-welcome" class="cv-section">
+                    <h2>Welcome to CV Clicker!</h2>
+                    <p>Click anywhere to earn points and unlock my CV sections.</p>
+                    <p>The more you click, the more you learn about me!</p>
+                    <div class="unlock-hints">
+                        <div class="hint"><span>10</span> Header</div>
+                        <div class="hint"><span>50</span> Skills</div>
+                        <div class="hint"><span>150</span> Experience</div>
+                        <div class="hint"><span>400</span> Projects</div>
+                        <div class="hint"><span>800</span> Education</div>
+                        <div class="hint"><span>1500</span> Contact</div>
+                    </div>
+                </section>
+                <section id="cv-header" class="cv-section locked"></section>
+                <section id="cv-skills" class="cv-section locked"></section>
+                <section id="cv-experience" class="cv-section locked"></section>
+                <section id="cv-projects" class="cv-section locked"></section>
+                <section id="cv-education" class="cv-section locked"></section>
+                <section id="cv-contact" class="cv-section locked"></section>
+            </div>
+        </aside>
+
+        <div id="achievement-toast" class="hidden"></div>
+    </div>
+
+    <script src="js/persistence.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/cv-renderer.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
