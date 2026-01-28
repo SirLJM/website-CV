@@ -160,7 +160,7 @@ const Store = {
     },
 
     getAutoClickRate(state) {
-        return (state.upgrades.autoclicker || 0) * 1;
+        return state.upgrades.autoclicker || 0;
     },
 
     applyTheme(themeId) {

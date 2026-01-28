@@ -21,7 +21,8 @@ class Game {
             cvToggle: document.getElementById('cv-toggle'),
             langToggle: document.getElementById('lang-toggle'),
             soundToggle: document.getElementById('sound-toggle'),
-            achievementToast: document.getElementById('achievement-toast')
+            achievementToast: document.getElementById('achievement-toast'),
+            resetBtn: document.getElementById('reset-btn')
         };
 
         this.bindEvents();
@@ -42,6 +43,11 @@ class Game {
         this.elements.langToggle.addEventListener('click', () => this.toggleLanguage());
 
         this.elements.soundToggle.addEventListener('click', () => this.toggleSound());
+
+        this.elements.resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.resetProgress();
+        });
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -248,6 +254,31 @@ class Game {
         }
 
         this.save();
+    }
+
+    resetProgress() {
+        if (!confirm('Reset all progress? This cannot be undone.')) return;
+
+        Persistence.clear();
+        this.state = { ...Persistence.defaultState };
+
+        Store.applyTheme(null);
+
+        document.querySelectorAll('.cv-section').forEach(section => {
+            if (section.id !== 'cv-welcome') {
+                section.classList.add('locked');
+                section.innerHTML = '';
+            }
+        });
+
+        this.elements.storeMenu.classList.add('hidden');
+        this.elements.langToggle.classList.add('hidden');
+        this.elements.cvPanel.classList.add('collapsed');
+
+        this.elements.soundToggle.querySelector('.sound-on').classList.remove('hidden');
+        this.elements.soundToggle.querySelector('.sound-off').classList.add('hidden');
+
+        this.updateDisplay();
     }
 
     updateDisplay() {
