@@ -24,7 +24,7 @@ CV Clicker is a gamified personal CV/resume website. Users click to earn points 
 - Auto-saves every 30 seconds and on visibility change
 - State includes: totalClicks, upgrades owned, unlocked sections, theme, language
 
-### CV Content (js/cv-renderer.js + data/content_it.yaml)
+### CV Content (js/cv-renderer.js + data/content_general.yaml)
 - Bilingual CV data (English/Polish) parsed from YAML at runtime using js-yaml CDN
 - Sections unlock at click thresholds: 10 (header), 50 (skills), 150 (experience), 400 (projects), 800 (education), 1500 (contact)
 - `CVRenderer.renderSection()` generates HTML for each section type

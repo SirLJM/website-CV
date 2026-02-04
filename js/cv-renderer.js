@@ -1,7 +1,7 @@
 const CVRenderer = {
     data: null,
     currentLang: 'en',
-    currentCvType: 'it',
+    currentCvType: 'general',
     githubBaseUrl: 'https://raw.githubusercontent.com/SirLJM/CV/main/static',
 
     unlockThresholds: [
@@ -14,6 +14,7 @@ const CVRenderer = {
     ],
 
     cvTypes: {
+        general: { name: 'General', file: 'content_general.yaml' },
         it: { name: 'IT Developer', file: 'content_it.yaml' },
         pm: { name: 'Project Manager', file: 'content_pm.yaml' },
         ba: { name: 'Business Analyst', file: 'content_ba.yaml' }
@@ -122,10 +123,10 @@ const CVRenderer = {
     renderHeader(container, data) {
         container.innerHTML = `
             <div class="profile">
-                <img src="assets/images/CV_1024x1024.png" alt="${data.name}" class="profile-photo">
+                <img src="assets/images/my_photo_transparent.png" alt="${data.name}" class="profile-photo">
                 <div class="profile-info">
                     <h2>${data.name}</h2>
-                    <div class="title">Java Developer / Project Manager</div>
+                    <div class="title">Software Engineer / Project Manager / Business Analyst</div>
                     <p>${data.intro}</p>
                 </div>
             </div>
